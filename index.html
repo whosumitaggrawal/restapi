@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .book-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .book-info {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Books Information</h1>
+    <div id="booksContainer"></div>
+
+    <script>
+        // Function to fetch data from the API
+        async function fetchData() {
+            try {
+                const response = await fetch('http://localhost:5000/books');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Function to display books
+        
+        async function displayBooks() {
+            const booksContainer = document.getElementById("booksContainer");
+            const apiResponse = await fetchData();
+
+            if (apiResponse && apiResponse.books) {
+                apiResponse.books.forEach(function(book) {
+                    const bookContainer = document.createElement("div");
+                    bookContainer.classList.add("book-container");
+
+                    const bookInfo = `
+                        <div class="book-info">
+                            <strong>Title:</strong> ${book.title}<br>
+                            <strong>Author:</strong> ${book.author}<br>
+                            <strong>Language:</strong> ${book.language}<br>
+                            <strong>ID:</strong> ${book.id}<br>
+                        </div>
+                    `;
+
+                    bookContainer.innerHTML = bookInfo;
+                    booksContainer.appendChild(bookContainer);
+                });
+            } else {
+                booksContainer.innerHTML = '<p>No books found.</p>';
+            }
+        }
+
+        // Call the function to display books on page load
+        window.onload = displayBooks;
+    </script>
+</body>
+</html>
